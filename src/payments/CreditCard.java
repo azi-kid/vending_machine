@@ -13,19 +13,6 @@ public class CreditCard implements PaymentMethod {
         this.balance = balance;
     }
 
-    public int getBalance() {
-        return balance;
-    }
-
-    public void setBalance(int balance) {
-        this.balance = balance;
-    }
-
-    @Override
-    public void payWith() {
-        System.out.println("Выбранный способ оплаты — кредитная карта.");
-    }
-
 
     public int getPIN() {
         return PIN;
@@ -33,5 +20,24 @@ public class CreditCard implements PaymentMethod {
 
     public void setPIN(int PIN) {
         this.PIN = PIN;
+    }
+
+    @Override
+    public int getAvailableBalance() {
+        return balance;
+    }
+
+    @Override
+    public void addFunds(int amount) {
+        this.balance = this.getAvailableBalance() + amount;
+    }
+
+    @Override
+    public boolean charge(int amount) {
+        if(this.balance >= amount){
+            this.balance -= amount;
+            return true;
+        }
+        return false;
     }
 }

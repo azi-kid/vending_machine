@@ -7,16 +7,22 @@ public class CoinAcceptor implements PaymentMethod{
         this.amount = amount;
     }
 
-    public int getAmount() {
+    @Override
+    public int getAvailableBalance() {
         return amount;
     }
 
-    public void setAmount(int amount) {
-        this.amount = amount;
+    @Override
+    public void addFunds(int amount) {
+        this.amount += amount;
     }
 
     @Override
-    public void payWith() {
-        System.out.println("Выбранный способ оплаты — Монета");
+    public boolean charge(int amount) {
+        if(this.amount >= amount){
+            this.amount -= amount;
+            return true;
+        }
+        return false;
     }
 }

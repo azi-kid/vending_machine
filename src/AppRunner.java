@@ -2,6 +2,7 @@ import enums.ActionLetter;
 import model.*;
 import payments.CoinAcceptor;
 import payments.CreditCard;
+import payments.PaymentMethod;
 import util.UniversalArray;
 import util.UniversalArrayImpl;
 
@@ -11,8 +12,8 @@ public class AppRunner {
 
     private final UniversalArray<Product> products = new UniversalArrayImpl<>();
 
-    private final CoinAcceptor coinAcceptor;
-    private final CreditCard card;
+    private final PaymentMethod coinAcceptor;
+    private final PaymentMethod card;
 
     private static boolean isExit = false;
 
@@ -31,49 +32,44 @@ public class AppRunner {
 
     public static void run() {
         AppRunner app = new AppRunner();
-        while (!isExit) {
-            app.startSimulation();
-        }
-    }
-
-    private void startSimulation() {
-        UniversalArray<Product> allowProducts = new UniversalArrayImpl<>();
-        print("В автомате доступны:");
-        showProducts(products);
-
         System.out.println("Выберите способ оплаты:");
         System.out.println("1 - монетой");
         System.out.println("2 - кредитной картой");
         int option = Integer.parseInt(fromConsole());
-
-        switch (option){
-            case 1:
-            coinAcceptor.payWith();
-                print("Монет на сумму: " + coinAcceptor.getAmount());
-                allowProducts.addAll(getAllowedProducts().toArray());
-                chooseAction(allowProducts, coinAcceptor);
-                break;
-            case 2:
-            default:
-                card.payWith();
-                print("На балансе: " + card.getBalance());
-                allowProducts.addAll(getAllowedProducts().toArray());
-                chooseAction(allowProducts, card);
+        if(option == 1){
+            System.out.println("Выбранный способ оплаты — Монета");
+            while (!isExit) {
+                app.startSimulation(app.coinAcceptor);
+            }
+        }else{
+            System.out.println("Выбранный способ оплаты — кредитная карта.");
+            while (!isExit) {
+                app.startSimulation(app.card);
+            }
         }
+    }
+
+    private void startSimulation(PaymentMethod paymentMethod) {
+        UniversalArray<Product> allowProducts = new UniversalArrayImpl<>();
+        print("В автомате доступны:");
+        showProducts(products);
+        print("Доступно средств: " + paymentMethod.getAvailableBalance());
+        allowProducts.addAll(getAllowedProducts(paymentMethod).toArray());
+        chooseAction(allowProducts, paymentMethod);
 
     }
 
-    private UniversalArray<Product> getAllowedProducts() {
+    private UniversalArray<Product> getAllowedProducts(PaymentMethod paymentMethod) {
         UniversalArray<Product> allowProducts = new UniversalArrayImpl<>();
         for (int i = 0; i < products.size(); i++) {
-            if (coinAcceptor.getAmount() >= products.get(i).getPrice()) {
+            if (paymentMethod.getAvailableBalance() >= products.get(i).getPrice()) {
                 allowProducts.add(products.get(i));
             }
         }
         return allowProducts;
     }
 
-    private <T> void chooseAction(UniversalArray<Product> products, T paymentMethod) {
+    private void chooseAction(UniversalArray<Product> products, PaymentMethod paymentMethod) {
         print(" a - Пополнить баланс");
         showActions(products);
         print(" h - Выйти");
@@ -118,7 +114,7 @@ public class AppRunner {
         }
     }
 
-    private String fromConsole() {
+    private static String fromConsole() {
         return new Scanner(System.in).nextLine();
     }
 
@@ -128,29 +124,21 @@ public class AppRunner {
         }
     }
 
-    private void print(String msg) {
+    private static void print(String msg) {
         System.out.println(msg);
     }
 
-    private <T> void addBalance(T paymentMethod) {
-        if(paymentMethod.equals(card)){
-            card.setBalance(card.getBalance() + 10);
-            print("Вы пополнили баланс на 10");
-            print("На балансе: " + card.getBalance());
-        }else if(paymentMethod.equals(coinAcceptor)){
-            coinAcceptor.setAmount(coinAcceptor.getAmount() + 10);
-            print("Вы пополнили баланс на 10");
-            print("Монет на сумму: " + coinAcceptor.getAmount());
-        }
+    private void addBalance(PaymentMethod paymentMethod) {
 
+        paymentMethod.addFunds(10);
+        print("Вы пополнили баланс на 10");
+        print("На балансе: " + paymentMethod.getAvailableBalance());
     }
 
-    private <T> void buy(T paymentMethod, int i) {
-        if(paymentMethod.equals(card)){
-            card.setBalance(card.getBalance() - products.get(i).getPrice());
-        }else if(paymentMethod.equals(coinAcceptor)){
-            coinAcceptor.setAmount(coinAcceptor.getAmount() - products.get(i).getPrice());
+    private void buy(PaymentMethod method, int index) {
+        Product product = products.get(index);
+        if(!method.charge(product.getPrice())){
+            System.out.println("Недостаточно средств");
         }
-
     }
 }
