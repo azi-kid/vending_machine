@@ -59,20 +59,30 @@ public class AppRunner {
         print(" h - Выйти");
 
         try {
+
             String action = fromConsole().substring(0, 1);
+
             if ("h".equalsIgnoreCase(action)) {
                 isExit = true;
-            }else{
-                for (int i = 0; i < products.size(); i++) {
-                    if (products.get(i).getActionLetter().equals(ActionLetter.valueOf(action.toUpperCase()))) {
-                        coinAcceptor.setAmount(coinAcceptor.getAmount() - products.get(i).getPrice());
-                        print("Вы купили " + products.get(i).getName());
-                        break;
-                    }
+                return;
+            }
+
+            boolean isFound = false;
+            for (int i = 0; i < products.size(); i++) {
+                if (products.get(i).getActionLetter().getValue().equalsIgnoreCase(action)) {
+                    coinAcceptor.setAmount(coinAcceptor.getAmount() - products.get(i).getPrice());
+                    print("Вы купили " + products.get(i).getName());
+                    isFound = true;
+                    break;
                 }
             }
+
+            if(!isFound){
+                throw new IllegalArgumentException();
+            }
+
         } catch (IllegalArgumentException e) {
-            print("Недопустимая буква. Попрбуйте еще раз.");
+            print("Недопустимая буква. Попробуйте еще раз.");
             chooseAction(products);
         }
 
