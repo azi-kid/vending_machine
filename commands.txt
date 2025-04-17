@@ -3,3 +3,6 @@ Used commands:
 2. git add --all
 3. git commit AppRunner.java -m "modified chooseAction: String action and if condition for 'h' added in try block"
 4. touch commands.txt
+5. git add commands.txt
+6.git commit -m "added commands.txt file"
+
