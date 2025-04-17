@@ -1,5 +1,7 @@
 import enums.ActionLetter;
 import model.*;
+import payments.CoinAcceptor;
+import payments.CreditCard;
 import util.UniversalArray;
 import util.UniversalArrayImpl;
 
@@ -10,6 +12,7 @@ public class AppRunner {
     private final UniversalArray<Product> products = new UniversalArrayImpl<>();
 
     private final CoinAcceptor coinAcceptor;
+    private final CreditCard card;
 
     private static boolean isExit = false;
 
@@ -23,6 +26,7 @@ public class AppRunner {
                 new Pistachios(ActionLetter.G, 130)
         });
         coinAcceptor = new CoinAcceptor(100);
+        card = new CreditCard(1234, 150);
     }
 
     public static void run() {
@@ -33,14 +37,29 @@ public class AppRunner {
     }
 
     private void startSimulation() {
+        UniversalArray<Product> allowProducts = new UniversalArrayImpl<>();
         print("В автомате доступны:");
         showProducts(products);
 
-        print("Монет на сумму: " + coinAcceptor.getAmount());
+        System.out.println("Выберите способ оплаты:");
+        System.out.println("1 - монетой");
+        System.out.println("2 - кредитной картой");
+        int option = Integer.parseInt(fromConsole());
 
-        UniversalArray<Product> allowProducts = new UniversalArrayImpl<>();
-        allowProducts.addAll(getAllowedProducts().toArray());
-        chooseAction(allowProducts);
+        switch (option){
+            case 1:
+            coinAcceptor.payWith();
+                print("Монет на сумму: " + coinAcceptor.getAmount());
+                allowProducts.addAll(getAllowedProducts().toArray());
+                chooseAction(allowProducts, coinAcceptor);
+                break;
+            case 2:
+            default:
+                card.payWith();
+                print("На балансе: " + card.getBalance());
+                allowProducts.addAll(getAllowedProducts().toArray());
+                chooseAction(allowProducts, card);
+        }
 
     }
 
@@ -54,7 +73,7 @@ public class AppRunner {
         return allowProducts;
     }
 
-    private void chooseAction(UniversalArray<Product> products) {
+    private <T> void chooseAction(UniversalArray<Product> products, T paymentMethod) {
         print(" a - Пополнить баланс");
         showActions(products);
         print(" h - Выйти");
@@ -64,8 +83,7 @@ public class AppRunner {
             String action = fromConsole().substring(0, 1);
 
             if ("a".equalsIgnoreCase(action)) {
-                coinAcceptor.setAmount(coinAcceptor.getAmount() + 10);
-                print("Вы пополнили баланс на 10");
+                addBalance(paymentMethod);
                 return;
             }else if ("h".equalsIgnoreCase(action)) {
                 isExit = true;
@@ -75,7 +93,7 @@ public class AppRunner {
             boolean isFound = false;
             for (int i = 0; i < products.size(); i++) {
                 if (products.get(i).getActionLetter().getValue().equalsIgnoreCase(action)) {
-                    coinAcceptor.setAmount(coinAcceptor.getAmount() - products.get(i).getPrice());
+                    buy(paymentMethod, i);
                     print("Вы купили " + products.get(i).getName());
                     isFound = true;
                     break;
@@ -88,7 +106,7 @@ public class AppRunner {
 
         } catch (IllegalArgumentException e) {
             print("Недопустимая буква. Попробуйте еще раз.");
-            chooseAction(products);
+            chooseAction(products, paymentMethod);
         }
 
 
@@ -112,5 +130,27 @@ public class AppRunner {
 
     private void print(String msg) {
         System.out.println(msg);
+    }
+
+    private <T> void addBalance(T paymentMethod) {
+        if(paymentMethod.equals(card)){
+            card.setBalance(card.getBalance() + 10);
+            print("Вы пополнили баланс на 10");
+            print("На балансе: " + card.getBalance());
+        }else if(paymentMethod.equals(coinAcceptor)){
+            coinAcceptor.setAmount(coinAcceptor.getAmount() + 10);
+            print("Вы пополнили баланс на 10");
+            print("Монет на сумму: " + coinAcceptor.getAmount());
+        }
+
+    }
+
+    private <T> void buy(T paymentMethod, int i) {
+        if(paymentMethod.equals(card)){
+            card.setBalance(card.getBalance() - products.get(i).getPrice());
+        }else if(paymentMethod.equals(coinAcceptor)){
+            coinAcceptor.setAmount(coinAcceptor.getAmount() - products.get(i).getPrice());
+        }
+
     }
 }

@@ -1,6 +1,6 @@
-package model;
+package payments;
 
-public class CoinAcceptor {
+public class CoinAcceptor implements PaymentMethod{
     private int amount;
 
     public CoinAcceptor(int amount) {
@@ -13,5 +13,10 @@ public class CoinAcceptor {
 
     public void setAmount(int amount) {
         this.amount = amount;
+    }
+
+    @Override
+    public void payWith() {
+        System.out.println("Выбранный способ оплаты — Монета");
     }
 }
