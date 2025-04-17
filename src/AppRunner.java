@@ -12,9 +12,6 @@ public class AppRunner {
 
     private final UniversalArray<Product> products = new UniversalArrayImpl<>();
 
-    private final PaymentMethod coinAcceptor;
-    private final PaymentMethod card;
-
     private static boolean isExit = false;
 
     private AppRunner() {
@@ -26,8 +23,6 @@ public class AppRunner {
                 new Mars(ActionLetter.F, 80),
                 new Pistachios(ActionLetter.G, 130)
         });
-        coinAcceptor = new CoinAcceptor(100);
-        card = new CreditCard(1234, 150);
     }
 
     public static void run() {
@@ -38,14 +33,28 @@ public class AppRunner {
         int option = Integer.parseInt(fromConsole());
         if(option == 1){
             System.out.println("Выбранный способ оплаты — Монета");
+            CoinAcceptor coinAcceptor = new CoinAcceptor(100);
             while (!isExit) {
-                app.startSimulation(app.coinAcceptor);
+                app.startSimulation(coinAcceptor);
             }
         }else{
             System.out.println("Выбранный способ оплаты — кредитная карта.");
-            while (!isExit) {
-                app.startSimulation(app.card);
+            System.out.println("Введите номер карты:");
+            String cardNum = fromConsole();
+
+            System.out.println("Введите пин-код:");
+            int pin = Integer.parseInt(fromConsole());
+
+            CreditCard card = new CreditCard(cardNum);
+
+            while (pin != card.getPIN()){
+                System.out.println("Wrong PIN! Try again");
+                pin = Integer.parseInt(fromConsole());
             }
+            while (!isExit) {
+                app.startSimulation(card);
+            }
+
         }
     }
 
