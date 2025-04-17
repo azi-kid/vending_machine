@@ -55,6 +55,7 @@ public class AppRunner {
     }
 
     private void chooseAction(UniversalArray<Product> products) {
+        print(" a - Пополнить баланс");
         showActions(products);
         print(" h - Выйти");
 
@@ -62,7 +63,11 @@ public class AppRunner {
 
             String action = fromConsole().substring(0, 1);
 
-            if ("h".equalsIgnoreCase(action)) {
+            if ("a".equalsIgnoreCase(action)) {
+                coinAcceptor.setAmount(coinAcceptor.getAmount() + 10);
+                print("Вы пополнили баланс на 10");
+                return;
+            }else if ("h".equalsIgnoreCase(action)) {
                 isExit = true;
                 return;
             }
