@@ -10,6 +10,7 @@ Used commands:
 9. git commit -m "in chooseAction method added for loop inside of else block"
 10.git commit -m "modified chooseAction method in case if user wants to choose unavavailable product"
 11.git commit -m "added methods in PaymentMethod interface and overrided them in CoinAcceptor and CreditCard classes"
-
+12. git push origin master
+12.
 
 
