@@ -1,16 +1,15 @@
 package payments;
 
-import payments.PaymentMethod;
 
 public class CreditCard implements PaymentMethod {
-    private int cardNumber;
-    private int PIN;
+    private String cardNumber;
+    private final int PIN;
     private int balance;
 
-    public CreditCard( int pin, int balance) {
-        this.cardNumber = 450065783;
-        this.PIN = pin;
-        this.balance = balance;
+    public CreditCard(String cardNumber) {
+        this.cardNumber = cardNumber;
+        this.PIN = 7575;
+        this.balance = 150;
     }
 
 
@@ -18,9 +17,6 @@ public class CreditCard implements PaymentMethod {
         return PIN;
     }
 
-    public void setPIN(int PIN) {
-        this.PIN = PIN;
-    }
 
     @Override
     public int getAvailableBalance() {
