@@ -4,5 +4,11 @@ Used commands:
 3. git commit AppRunner.java -m "modified chooseAction: String action and if condition for 'h' added in try block"
 4. touch commands.txt
 5. git add commands.txt
-6.git commit -m "added commands.txt file"
+6. git commit -m "added commands.txt file"
+7. git commit -m "in chooseAction method added for loop inside of else block"
+8. git add .
+9. git commit -m "in chooseAction method added for loop inside of else block"
+10.git commit -m "modified chooseAction method in case if user wants to choose unavavailable product"
+11.
+
 
