@@ -31,6 +31,11 @@ public class AppRunner {
         System.out.println("1 - монетой");
         System.out.println("2 - кредитной картой");
         int option = Integer.parseInt(fromConsole());
+
+        while (option < 1 || option > 2){
+            System.out.println("Неверный выбор! Попробуйте еще раз");
+            option = Integer.parseInt(fromConsole());
+        }
         if(option == 1){
             System.out.println("Выбранный способ оплаты — Монета");
             CoinAcceptor coinAcceptor = new CoinAcceptor(100);
@@ -48,7 +53,7 @@ public class AppRunner {
             CreditCard card = new CreditCard(cardNum);
 
             while (pin != card.getPIN()){
-                System.out.println("Wrong PIN! Try again");
+                System.out.println("Неправильный PIN-код! Попробуйте еще раз");
                 pin = Integer.parseInt(fromConsole());
             }
             while (!isExit) {
