@@ -21,7 +21,7 @@ public class UniversalArrayImpl<T> implements UniversalArray<T> {
     @Override
     public void add(T element) {
         array = Arrays.copyOf(array, array.length + 1);
-        array[array.length - 1] = element;
+        array[array.length - 1] = element;  //should be array[array.length] = element;
     }
 
     @Override
